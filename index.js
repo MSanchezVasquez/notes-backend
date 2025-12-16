@@ -1,7 +1,10 @@
 const express = require("express");
 const app = express();
+const cors = require("cors");
 
+app.use(cors());
 app.use(express.json());
+app.use(express.static("dist"));
 
 let notes = [
   {
@@ -72,7 +75,28 @@ app.post("/api/notes", (request, response) => {
   response.json(note);
 });
 
-const PORT = 3001;
+app.put("/api/notes/:id", (request, response) => {
+  const id = Number(request.params.id);
+  const body = request.body;
+
+  const note = notes.find((n) => n.id === id);
+
+  if (!note) {
+    return response.status(404).end();
+  }
+
+  const updatedNote = {
+    ...note,
+    important: body.important,
+    content: body.content,
+  };
+
+  notes = notes.map((n) => (n.id !== id ? n : updatedNote));
+
+  response.json(updatedNote);
+});
+
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
