@@ -1,3 +1,6 @@
+require("dotenv").config();
+const Note = require("./models/note");
+
 const express = require("express");
 const app = express();
 const cors = require("cors");
@@ -23,31 +26,6 @@ let notes = [
     important: true,
   },
 ];
-
-const mongoose = require("mongoose");
-
-const password = process.argv[2];
-
-// DO NOT SAVE YOUR PASSWORD TO GITHUB!!
-const url = `mongodb+srv://mcodex:${password}@cluster0.ryhasey.mongodb.net/noteApp?appName=Cluster0`;
-
-mongoose.set("strictQuery", false);
-mongoose.connect(url);
-
-const noteSchema = new mongoose.Schema({
-  content: String,
-  important: Boolean,
-});
-
-noteSchema.set("toJSON", {
-  transform: (document, returnedObject) => {
-    returnedObject.id = returnedObject._id.toString();
-    delete returnedObject._id;
-    delete returnedObject.__v;
-  },
-});
-
-const Note = mongoose.model("Note", noteSchema);
 
 app.get("/", (request, response) => {
   response.send("<h1>Hello World!</h1>");
@@ -123,7 +101,7 @@ app.put("/api/notes/:id", (request, response) => {
   response.json(updatedNote);
 });
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
