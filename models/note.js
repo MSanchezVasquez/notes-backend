@@ -8,7 +8,6 @@ console.log("connecting to", url);
 
 mongoose
   .connect(url)
-
   .then((result) => {
     console.log("connected to MongoDB");
   })
@@ -17,7 +16,11 @@ mongoose
   });
 
 const noteSchema = new mongoose.Schema({
-  content: String,
+  content: {
+    type: String,
+    minLength: 5,
+    required: true,
+  },
   important: Boolean,
 });
 
